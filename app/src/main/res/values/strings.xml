@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">My_screen_video</string>
+
+    <string name="hint_duration">Duración (ms)</string>
+    <string name="hint_cycles">Ciclos</string>
+    <string name="hint_user_number">Número binario (ej. 401000)</string>
+    <string name="btn_start">Iniciar</string>
+    <string name="error_invalid_binary">Solo 0 y 1</string>
+    <string name="error_duration_zero">Duración > 0</string>
+    <string name="error_cycles_zero">Ciclos > 0</string>
+</resources>

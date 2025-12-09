@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer name="default_duration">1000</integer> <!-- 1 s -->
+    <integer name="min_duration">200</integer>
+
+</resources>
