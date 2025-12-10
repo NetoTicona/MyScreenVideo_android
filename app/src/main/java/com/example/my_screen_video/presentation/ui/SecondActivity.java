@@ -8,6 +8,7 @@ import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.List;
+import android.view.View;
 
 public class SecondActivity extends AppCompatActivity {
 
@@ -26,6 +27,9 @@ public class SecondActivity extends AppCompatActivity {
 
         /* Pantalla completa */
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        // Mantiene la pantalla encendida mientras se muestran los colores
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
@@ -57,6 +61,28 @@ public class SecondActivity extends AppCompatActivity {
             }
         };
         handler.post(runner);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            hideSystemUI();
+        }
+    }
+
+    private void hideSystemUI() {
+        // Habilita el modo inmersivo "sticky" (si tocas la pantalla aparecen y desaparecen solas)
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        // Contenido debajo de las barras para que no salte al aparecer/desaparecer
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        // Ocultar barras de navegación y estado
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
     @Override
