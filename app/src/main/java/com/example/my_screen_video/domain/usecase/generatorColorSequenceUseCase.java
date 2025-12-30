@@ -1,11 +1,10 @@
 package com.example.my_screen_video.domain.usecase;
 
+import android.graphics.Color; // Necesario para la conversión HSV
 import java.util.ArrayList;
 import java.util.List;
 import androidx.annotation.NonNull;
 import com.example.my_screen_video.domain.model.ColorSequence;
-
-
 
 public class generatorColorSequenceUseCase {
 
@@ -23,7 +22,6 @@ public class generatorColorSequenceUseCase {
     public ColorSequence invoke(@NonNull int[] vectorCodigos) {
 
         if (vectorCodigos.length != 6) {
-
             throw new IllegalArgumentException("El vector debe tener exactamente 6 elementos");
         }
 
@@ -45,26 +43,63 @@ public class generatorColorSequenceUseCase {
             paresSeleccionados[i] = siguiente;
         }
 
-        List<Integer> secuencia = new ArrayList<>(n + 1);
-        secuencia.add(COLOR_MAPS[paresSeleccionados[0][0] - 1]); // índice 0-based
-        secuencia.add(COLOR_MAPS[paresSeleccionados[0][1] - 1]);
+        // Generamos la secuencia numérica base (índices del 1 al 6)
+        List<Integer> secuenciaNumerica = new ArrayList<>(n + 1);
+        secuenciaNumerica.add(COLOR_MAPS[paresSeleccionados[0][0] - 1]);
+        secuenciaNumerica.add(COLOR_MAPS[paresSeleccionados[0][1] - 1]);
         for (int j = 1; j < n; j++) {
-            secuencia.add(COLOR_MAPS[paresSeleccionados[j][1] - 1]);
+            secuenciaNumerica.add(COLOR_MAPS[paresSeleccionados[j][1] - 1]);
         }
 
+        // --- AQUI APLICAMOS TU LÓGICA DE BLANCO Y COMPLEMENTARIOS ---
+        List<String> hexFinalList = new ArrayList<>();
 
-        // Mapear a hex
-        List<String> hex = new ArrayList<>(secuencia.size());
-        for (Integer num : secuencia) {
-            hex.add(mapToHex(num));
+        // 1. Primero insertamos el BLANCO antes de nada
+        hexFinalList.add("#FFFFFF");
+
+        // 2. Recorremos los colores base y agregamos: Original -> Complementario
+        for (Integer num : secuenciaNumerica) {
+            String colorOriginal = mapToHex(num);
+            
+            // Agregamos el original
+            hexFinalList.add(colorOriginal);
+            
+            // Calculamos y agregamos el complementario (HSV + 180°)
+            String colorComplementario = getComplementaryColor(colorOriginal);
+            hexFinalList.add(colorComplementario);
         }
 
-
-        return new ColorSequence(hex);
-
+        return new ColorSequence(hexFinalList);
     }
 
-    private int[] buscarPrimero ( int[][] mat, int val){
+    // --- MÉTODOS AUXILIARES ---
+
+    /**
+     * Recibe un color Hex, lo convierte a HSV, suma 180° al Hue y devuelve el nuevo Hex.
+     */
+    private String getComplementaryColor(String hexColor) {
+        // 1. Convertir Hex a int
+        int colorInt = Color.parseColor(hexColor);
+        
+        // 2. Convertir a componentes HSV
+        float[] hsv = new float[3];
+        Color.colorToHSV(colorInt, hsv);
+        
+        // hsv[0] es el Hue (Matiz) [0 .. 360)
+        // hsv[1] es Saturation
+        // hsv[2] es Value (Brightness)
+
+        // 3. Rotar 180 grados para el complementario
+        hsv[0] = (hsv[0] + 180) % 360;
+
+        // 4. Convertir de vuelta a Int y luego a Hex String
+        int complementarioInt = Color.HSVToColor(hsv);
+        
+        // Formatear a string hexadecimal #RRGGBB
+        return String.format("#%06X", (0xFFFFFF & complementarioInt));
+    }
+
+    private int[] buscarPrimero(int[][] mat, int val) {
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
                 if (mat[i][j] == val) {
@@ -75,7 +110,7 @@ public class generatorColorSequenceUseCase {
         throw new RuntimeException("Valor " + val + " no encontrado en CODIN");
     }
 
-    private int[] buscarConInicio ( int[][] mat, int val, int inicio){
+    private int[] buscarConInicio(int[][] mat, int val, int inicio) {
         for (int j = 0; j < 6; j++) {
             if (mat[inicio - 1][j] == val) {
                 return new int[]{inicio, j + 1};
@@ -84,25 +119,15 @@ public class generatorColorSequenceUseCase {
         return null;
     }
 
-    private String mapToHex ( int num){
+    private String mapToHex(int num) {
         switch (num) {
-            case 1:
-                return "#FF0000"; // rojo
-            case 2:
-                return "#00FF00"; // verde
-            case 3:
-                return "#0000FF"; // azul
-            case 4:
-                return "#00FFFF"; // cian
-            case 5:
-                return "#FF00FF"; // magenta
-            case 6:
-                return "#FFFF00"; // amarillo
-            default:
-                throw new IllegalArgumentException("Color index fuera de rango: " + num);
+            case 1: return "#FF0000"; // Rojo
+            case 2: return "#00FF00"; // Verde
+            case 3: return "#0000FF"; // Azul
+            case 4: return "#00FFFF"; // Cian
+            case 5: return "#FF00FF"; // Magenta
+            case 6: return "#FFFF00"; // Amarillo
+            default: throw new IllegalArgumentException("Color index fuera de rango: " + num);
         }
     }
-
-
-
 }
