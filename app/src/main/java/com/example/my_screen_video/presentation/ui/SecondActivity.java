@@ -12,7 +12,8 @@ import android.view.View;
 
 public class SecondActivity extends AppCompatActivity {
 
-    private List<String> hexColors;
+    private ArrayList<String> hexColors;
+    private ArrayList<Integer> durations;
     private int durationMs;
     private int totalCycles;
 
@@ -20,6 +21,7 @@ public class SecondActivity extends AppCompatActivity {
     private int currentIndex = 0;
     private Handler handler = new Handler();
     private Runnable runner;
+    private android.widget.TextView tv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,22 +44,34 @@ public class SecondActivity extends AppCompatActivity {
         hexColors   = getIntent().getStringArrayListExtra("colors");
         durationMs  = getIntent().getIntExtra("duration", 1000);
         totalCycles = getIntent().getIntExtra("cycles", 1);
+        durations   = getIntent().getIntegerArrayListExtra("durations");
 
         /* Runnable ciclico */
         runner = new Runnable() {
             @Override
             public void run() {
-                tv.setBackgroundColor(Color.parseColor(hexColors.get(currentIndex)));
-                currentIndex++;
-                if (currentIndex == hexColors.size()) {
-                    currentIndex = 0;
-                    currentCycle++;
-                    if (currentCycle >= totalCycles) {
-                        finish();   // vuelve a Main
-                        return;
+                if (hexColors != null && !hexColors.isEmpty()) {
+                    // 1. Pintar el color actual
+                    tv.setBackgroundColor(Color.parseColor(hexColors.get(currentIndex)));
+
+                    // 2. Obtener la duración específica para ESTE color actual
+                    int timeForThisColor = durations.get(currentIndex);
+
+                    currentIndex++;
+
+                    // 3. Control de Ciclos
+                    if (currentIndex == hexColors.size()) {
+                        currentIndex = 0;
+                        currentCycle++;
+                        if (currentCycle >= totalCycles) {
+                            finish();
+                            return;
+                        }
                     }
+
+                    // 4. Programar el siguiente cambio usando el tiempo dinámico
+                    handler.postDelayed(this, timeForThisColor);
                 }
-                handler.postDelayed(this, durationMs);
             }
         };
         handler.post(runner);

@@ -40,31 +40,44 @@ public class MainActivity extends AppCompatActivity {
         btnStart.setOnClickListener(v -> {
             Toast.makeText(this, "Iniciando secuencia...", Toast.LENGTH_SHORT).show();
 
-            int duration = Integer.parseInt(etDuration.getText().toString());
-            int cycles   = Integer.parseInt(etCycles.getText().toString());
-            String bin   = etUser.getText().toString();
 
+            int userDuration = Integer.parseInt(etDuration.getText().toString());
+            int cycles   = Integer.parseInt(etCycles.getText().toString());
+            String binUser   = etUser.getText().toString();
+
+            // 2. Preparar Listas Maestras
+            ArrayList<String> masterColors = new ArrayList<>();
+            ArrayList<Integer> masterDurations = new ArrayList<>();
+            String preamblePattern = "111000111000111000111000111000";
+
+            for (char bit : preamblePattern.toCharArray()) {
+                if (bit == '1') {
+                    masterColors.add("#FFFFFF"); // Blanco
+                } else {
+                    masterColors.add("#000000"); // Negro
+                }
+                masterDurations.add(33); // <--- TIEMPO FIJO RAPIDO
+            }
 
             int[] vector = new int[6];
-            for (int i = 0; i < 6; i++) vector[i] = bin.charAt(i) - '0';
+            for (int i = 0; i < 6; i++) vector[i] = binUser.charAt(i) - '0';
 
+            generatorColorSequenceUseCase useCase = new generatorColorSequenceUseCase();
+            ColorSequence dataSequence = useCase.invoke(vector);
 
-            generatorColorSequenceUseCase useCase = new generatorColorSequenceUseCase ();
-            ColorSequence seq = useCase.invoke(vector);
-            StringBuilder sb = new StringBuilder("Secuencia: ");
-            for (String hex : seq.getHexColors()) {
-                // Convertimos hex → número 1-6 (mismo orden que ya tenías)
-                int num = ColorMapper.hexToNumber(hex); // ver abajo
-                sb.append(num).append(' ');
+            for (String hexColor : dataSequence.getHexColors()) {
+                masterColors.add(hexColor);
+                masterDurations.add(userDuration); // <--- TIEMPO DEL USUARIO LENTO
             }
-            tvSequence.setText(sb.toString());
-
 
             Intent i = new Intent(MainActivity.this, SecondActivity.class);
-            i.putStringArrayListExtra("colors", new ArrayList<>(seq.getHexColors()));
-            i.putExtra("duration", duration);
+            i.putStringArrayListExtra("colors", masterColors);
+            i.putIntegerArrayListExtra("durations", masterDurations); // Enviamos tiempos
             i.putExtra("cycles", cycles);
             startActivity(i);
+            //---------------------//
+
+
 
         });
     }

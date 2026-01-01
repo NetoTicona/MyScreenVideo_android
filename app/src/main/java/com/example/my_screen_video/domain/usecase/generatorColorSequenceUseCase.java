@@ -55,7 +55,7 @@ public class generatorColorSequenceUseCase {
         List<String> hexFinalList = new ArrayList<>();
 
         // 1. Primero insertamos el BLANCO antes de nada
-        hexFinalList.add("#FFFFFF");
+        //hexFinalList.add("#FFFFFF");
 
         // 2. Recorremos los colores base y agregamos: Original -> Complementario
         for (Integer num : secuenciaNumerica) {
