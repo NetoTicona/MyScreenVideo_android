@@ -18,9 +18,11 @@ import com.example.my_screen_video.presentation.util.ColorMapper;
 public class MainActivity extends AppCompatActivity {
 
     /* ---- UI ---- */
+    private EditText etPreamble;
     private EditText etDuration, etCycles, etUser;
     private Button btnStart;
     private TextView tvSequence;
+    private EditText etPreambleCycles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +30,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         /* Referencias */
+        etPreamble = findViewById(R.id.etPreamble);
         etDuration = findViewById(R.id.etDuration);
         etCycles   = findViewById(R.id.etCycles);
         etUser     = findViewById(R.id.etUserNumber);
         btnStart   = findViewById(R.id.btnStart);
         tvSequence = findViewById(R.id.tvSequence);
+        etPreambleCycles = findViewById(R.id.etPreambleCycles);
 
         /* Botón siempre habilitado: lanza directo */
         btnStart.setEnabled(true);
@@ -44,13 +48,22 @@ public class MainActivity extends AppCompatActivity {
             int userDuration = Integer.parseInt(etDuration.getText().toString());
             int cycles   = Integer.parseInt(etCycles.getText().toString());
             String binUser   = etUser.getText().toString();
+            String basePreamble = etPreamble.getText().toString();
+            String cyclesStr = etPreambleCycles.getText().toString();
+            int preambleLoops = cyclesStr.isEmpty() ? 1 : Integer.parseInt(cyclesStr);
+            StringBuilder finalPreamblePattern = new StringBuilder();
+
+            for (int k = 0; k < preambleLoops; k++) {
+                finalPreamblePattern.append(basePreamble);
+            }
+
 
             // 2. Preparar Listas Maestras
             ArrayList<String> masterColors = new ArrayList<>();
             ArrayList<Integer> masterDurations = new ArrayList<>();
-            String preamblePattern = "111000111000111000111000111000";
+            //String preamblePattern = "111000111000111000111000111000";
 
-            for (char bit : preamblePattern.toCharArray()) {
+            for (char bit : finalPreamblePattern.toString().toCharArray()) {
                 if (bit == '1') {
                     masterColors.add("#FFFFFF"); // Blanco
                 } else {

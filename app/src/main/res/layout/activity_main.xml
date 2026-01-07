@@ -8,6 +8,28 @@
     android:gravity="center"
     android:padding="32dp">
 
+
+
+
+
+    <EditText
+        android:id="@+id/etPreamble"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ej: 111000111 (1 bit durea 33ms) "
+        android:inputType="number"
+   
+        />
+
+        <EditText
+        android:id="@+id/etPreambleCycles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ej: 3"
+        android:inputType="number"
+        android:text="1" /> ```
+
+
     <!-- Duración -->
     <EditText
         android:id="@+id/etDuration"
