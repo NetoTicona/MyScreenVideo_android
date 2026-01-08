@@ -7,7 +7,7 @@ android {
     compileSdk 36
 
     defaultConfig {
-        applicationId "com.example.my_screen_video"
+        applicationId "com.example.my_screen_video_preamble"
         minSdk 21
         targetSdk 36
         versionCode 1

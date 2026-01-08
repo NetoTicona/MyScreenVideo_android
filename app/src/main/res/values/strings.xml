@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My_screen_video</string>
+    <string name="app_name">Screen_video_preamble</string>
 
     <string name="hint_duration">Duración (ms)</string>
     <string name="hint_cycles">Ciclos</string>
